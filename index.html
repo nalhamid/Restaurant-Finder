@@ -12,7 +12,7 @@
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap theme-->
-    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- <link href="css/bootstrap-theme.min.css" rel="stylesheet"> -->
     <!-- custom css -->
     <link href="css/style.css" rel="stylesheet">
     <!-- **********************  Js ********************** -->
@@ -32,15 +32,16 @@
 <body>
     <div class="container">
         <!-- ********************** header ********************** -->
-        <header class="text-center navbar-fixed-top row">
+        <header class="text-center navbar navbar-default navbar-fixed-top row">
             <!-- app name -->
             <div class="container">
-            <div id="app-name" class="col-md-4">
-                <h2>Restaurant Finder</h2>
+            <div id="app-name" class="col-md-4 navbar-header">
+               <a class="navbar-brand" href="#">Restaurant Finder</a>
+              
             </div>
             <!-- search form -->
             <div id="filters" class="col-md-8">
-                <form class="navbar-form">
+                <form class="navbar-form navbar-right">
                     <div class="form-group">
                         <label for="searchText">text</label>
                         <input type="text" class="form-control" id="searchText" placeholder="Ex: Google Office NYC or 75 9th Ave, New York, NY">
