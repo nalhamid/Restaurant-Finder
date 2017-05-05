@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
+
+    <title>Restaurants Finder</title>
+     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Restaurants Finder</title>
+
     <!-- ********************** CSS files ********************** -->
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -21,7 +23,8 @@
     <!-- knockout framework -->
     <script src="js/knockout-3.4.2.js"></script>
     <!-- google map -->
-    <script async src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyD5Hk8aZ5BmdIHmAgt5tiEa2IaGOz_o9Sg"></script>
+    <!-- <script async defer src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyD5Hk8aZ5BmdIHmAgt5tiEa2IaGOz_o9Sg"></script> -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5Hk8aZ5BmdIHmAgt5tiEa2IaGOz_o9Sg&libraries=places&callback=initMap" async defer></script>
     <!-- app -->
     <script src="js/app.js"></script>
 </head>
@@ -29,20 +32,22 @@
 <body>
     <div class="container">
         <!-- ********************** header ********************** -->
-        <header class="row text-center">
+        <header class="text-center navbar-fixed-top row">
             <!-- app name -->
+            <div class="container">
             <div id="app-name" class="col-md-4">
                 <h2>Restaurant Finder</h2>
             </div>
             <!-- search form -->
             <div id="filters" class="col-md-8">
-                <form class="form-inline">
+                <form class="navbar-form">
                     <div class="form-group">
                         <label for="searchText">text</label>
                         <input type="text" class="form-control" id="searchText" placeholder="Ex: Google Office NYC or 75 9th Ave, New York, NY">
                     </div>
                     <button type="submit" class="btn btn-default">Search</button>
                 </form>
+            </div>
             </div>
         </header>
         <!-- ********************** /header ********************** -->
@@ -53,19 +58,23 @@
             </div>
             <!-- ********************** /restaurants-list ********************** -->
             <!-- ********************** map ********************** -->
-            <div id="map">
+            <div id="map-container" class="col-md-8 embed-responsive">
+            <div id="map" class="embed-responsive-item"></div>
             </div>
             <!-- ********************** /map ********************** -->
         </div>
         <!-- ********************** /main app contents ********************** -->
         <!-- ********************** footer ********************** -->
-        <footer class="row text-center">
+        <footer class="row text-center navbar-fixed-bottom">
+        <div class="container">
             <div id="copyrights" class="col-md-12">
                 <p>Nourah</p>
+            </div>
             </div>
         </footer>
         <!-- ********************** footer ********************** -->
     </div>
+
 </body>
 
 </html>
