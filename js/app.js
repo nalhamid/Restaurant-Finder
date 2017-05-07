@@ -51,6 +51,15 @@
      var AppViewModel = function() {
 
          var self = this;
+
+         var image = {
+             url: 'img/icon2.png',
+             size: new google.maps.Size(32, 32),
+             origin: new google.maps.Point(0, 0),
+             anchor: new google.maps.Point(0, 32),
+             scaledSize: new google.maps.Size(37, 37)
+         };
+
          self.restaurants = ko.observableArray();
          getCurrentLocation();
          getNearRestaurants();
@@ -80,11 +89,14 @@
              }
          }
 
+
+
          function createMarker(place) {
              var placeLoc = place.geometry.location;
              var marker = new google.maps.Marker({
                  map: map,
-                 position: place.geometry.location
+                 position: place.geometry.location,
+                 icon: image
              });
 
              google.maps.event.addListener(marker, 'click', function() {

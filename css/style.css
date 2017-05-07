@@ -18,8 +18,7 @@
     }
     
     #map-container,
-    #main-content,
-    .affix-map {
+    #main-content {
         height: 100%;
     }
     
