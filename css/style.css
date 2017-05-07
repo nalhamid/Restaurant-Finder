@@ -1,7 +1,4 @@
-    /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
 
-    /* Optional: Makes the sample page fill the window. */
     
     html,
     body,
@@ -9,24 +6,28 @@
         height: 100%;
         width: 100%;
     }
-
-body { 
-  padding-top: 50px; 
- /* padding-bottom: 50px; */
-}
-
-
-#map {
-  width:100%;
-    height: 100%;
-  height:calc(100% - 0px);
-}
-
-#map-container, #main-content{
-    height: 100%;
-
-}
-
-footer{
-  background-color: #eeeeee;
-}
+    
+    body {
+        padding-top: 50px;
+        /* padding-bottom: 50px; */
+    }
+    
+    #map {
+        width: 100%;
+        height: calc(100% - 0px);
+    }
+    
+    #map-container,
+    #main-content,
+    .affix-map {
+        height: 100%;
+    }
+    
+    footer {
+        background-color: #eeeeee;
+    }
+    
+    #restaurants-list {
+        height: calc(100% - 0px);
+        overflow-y: scroll;
+    }
