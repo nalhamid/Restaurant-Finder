@@ -28,11 +28,11 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container-fluid">
         <!-- ********************** header ********************** -->
         <header class="text-center navbar navbar-default navbar-fixed-top row">
             <!-- app name -->
-            <div class="container">
+            <div class="container-fluid">
                 <div id="app-name" class="col-md-4 navbar-header">
                     <a class="navbar-brand" href="#">Restaurant Finder</a>
                 </div>
@@ -52,10 +52,24 @@
         <!-- ********************** main app contents ********************** -->
         <div id="main-content" class="row">
             <!-- ********************** restaurants-list ********************** -->
-            <div id="restaurants-list" class="col-md-4" data-bind="foreach: restaurants">
-                <div class="restaurantInfo col-md-12">
-                    <h2 data-bind="text: name"></h2>
-                    <p data-bind="attr: htmlA"></p>
+            <div id="restaurants-list" class="col-md-4 no-gutter" data-bind="foreach: restaurants">
+                <div class="restaurantInfo col-md-12 no-gutter">
+                    <div class="text-info col-md-9">
+                        <a data-bind="attr: { href: url, title: name }">
+                            <h4 data-bind="text: name"></h4></a>
+                        <p>Rating: <span data-bind="text: rating"></span></p>
+                        <div data-bind="if: phone">
+                        	<p>phone: <span data-bind="text: phone"></span></p>
+                        </div>
+                        <p>Address: <span data-bind="text: address"></span></p>
+
+                        
+                    </div>
+                    <div class="place-img col-md-3">
+                        <div class="limit">
+                            <img class="img-responsive" data-bind="attr:{src: photo, alt: name}">
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- ********************** /restaurants-list ********************** -->
@@ -70,7 +84,7 @@
         <footer class="row text-center navbar-fixed-bottom">
             <div class="container">
                 <div id="copyrights" class="col-md-12">
-                    <p>Nourah</p>
+                    <p>Nourah Alhamid</p>
                 </div>
             </div>
         </footer>
