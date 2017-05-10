@@ -4,7 +4,7 @@
      var infoWindow;
      var service;
      var pos = { lat: 24.7241504, lng: 46.2620616 };
-
+     var currentDate = new Date();
      // ********************************* Initiate Map ****************************
      function initMap() {
 
@@ -51,7 +51,7 @@
          self.place_id = place.place_id;
          self.rating = place.rating;
          self.phone = place.formatted_phone_number;
-         self.photo = place.photos[0].getUrl({'maxWidth': 400, 'maxHeight': 400});
+         self.photo = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
          self.url = place.url;
 
 
@@ -74,6 +74,14 @@
 
          //array of restaurants list
          self.restaurants = ko.observableArray();
+
+         //Foursquare variables
+         var v = getV(currentDate);
+         var client_id = "5TS1P3MIKMNB14UOVVQIFCIO2GKWMBA420M1T1N3LZ453TBZ";
+         var client_secret = "PLTSUR3WFWTQLJWIERYRJHUE33YI0BWSCJHK5RW4N5T3G0IJ";
+         var auths = "?client_id=" + client_id + "&client_secret=" + client_secret + "&v=" + v;
+         var searchUrl = "https://api.foursquare.com/v2/venues/search" + auths;
+         var venuesDetailsUrl = "https://api.foursquare.com/v2/venues/";
 
          //get user current location
          getCurrentLocation();
@@ -148,10 +156,88 @@
              //event listener of marker click
              google.maps.event.addListener(marker, 'click', function() {
                  //TODO info window
+                 var venueID = getVenueID(place);
+                 var venueDetail;
+
+                 if (venueID !== false && venueID !== undefined) {
+                     venueDetail = foursquareDetails(venueID);
+                 }
+
+                 //check if there a match for place in foursquare 
+                 //if there a match get infowindow info from foursquare else from google places
+                 if (venueID === false || venueDetail === false || venueID === undefined || venueDetail === undefined) {
+                     console.log(venueID);
+                 } else {
+                     console.log(venueDetail.id);
+                 }
+
                  infoWindow.setContent(place.name);
                  infoWindow.open(map, this);
              });
          }
+
+
+         //************** Get Venue ID **************
+
+         function getVenueID(place) {
+             //set request url
+             var url = searchUrl + "&ll=" + place.geometry.location.lat() + "," + place.geometry.location.lng() + "&query=" + place.name + "&limit=1";
+             var venueID;
+             //request jason from foursquare
+             // $.getJSON(url)
+             //     .done(function(json) {
+             //         if (json.response.venues.length !== 0) {
+             //             //venue id
+             //             venueID =  json.response.venues[0].id;
+             //         } else {
+             //             venueID =  false;
+             //         }
+
+             //     }).fail(function() {
+             //         venueID =  false;
+             //     });
+
+             $.ajax({
+                 url: url,
+
+             }).always(function(json) {
+                 if (json.response.venues.length !== 0) {
+                     //venue id
+                     venueID = json.response.venues[0].id;
+                 } else {
+                     venueID = false;
+                 }
+                 console.log(venueID);
+             }).fail(function() {
+                 venueID = false;
+                 console.log(venueID);
+             });
+            
+         }
+         //************** Foursqure details  **************
+
+         function foursquareDetails(venueID) {
+             //set request url
+             var url = venuesDetailsUrl + venueID + auths;
+
+             //request jason from foursquare
+             $.getJSON(url)
+                 .done(function(json) {
+                     if (!$.isEmptyObject(json.response.venue)) {
+                         //venue id
+                         return json.response.venue;
+                     } else {
+                         return false;
+                     }
+
+                 }).fail(function() {
+                     return false;
+                 });
+
+         }
+         //************** Foursqure infowindow **************
+
+         //************** google infowindow **************
 
          //************** Handle Location Error Function **************
 
@@ -173,6 +259,19 @@
 
          });
 
+         //************** Get Formated YYYYMMDD **************
+         function getV(currentDate) {
+             var yyyy = currentDate.getFullYear().toString();
+             var mm = currentDate.getMonth() + 1;
+             var dd = currentDate.getDate();
 
+             if (dd < 10) {
+                 dd = '0' + dd;
+             }
+             if (mm < 10) {
+                 mm = '0' + mm;
+             }
+             return yyyy + mm + dd;
+         }
 
      }
