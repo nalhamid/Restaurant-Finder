@@ -5,6 +5,7 @@
      var service;
      var pos = { lat: 24.7241504, lng: 46.2620616 };
      var currentDate = new Date();
+
      // ********************************* Initiate Map ****************************
      function initMap() {
 
@@ -102,9 +103,8 @@
              }, callback);
          }
 
-
-
          //************** callback function (list of restaurants) **************
+     
          //results of the search query in getNearRestaurants() function
          function callback(results, status) {
 
@@ -127,7 +127,7 @@
          }
 
          //************** Get Restaurant Details Function **************
-
+  
          function getDetails(place, status) {
 
              //check status of the request
@@ -141,7 +141,7 @@
          }
 
          //************** Create Marker Function **************
-
+    
          function createMarker(place) {
              //get place location
              var placeLoc = place.geometry.location;
@@ -156,91 +156,78 @@
              //event listener of marker click
              google.maps.event.addListener(marker, 'click', function() {
                  //TODO info window
-                 var venueID = getVenueID(place);
+                 var venueID;
                  var venueDetail;
+                 var urlID = searchUrl + "&ll=" + place.geometry.location.lat() + "," + place.geometry.location.lng() + "&query=" + place.name + "&limit=1";
+                 var urlDetails; // = venuesDetailsUrl + venueID + auths;
+                 var currentMarker = this;
 
-                 if (venueID !== false && venueID !== undefined) {
-                     venueDetail = foursquareDetails(venueID);
-                 }
+                 //***** Get Venue ID *****
+                 $.ajax({
+                     url: urlID,
+                     // async: false
+                     success: function(json) {
+                         if (json.response.venues.length !== 0) {
+                             //venue id
+                             venueID = json.response.venues[0].id;
 
-                 //check if there a match for place in foursquare 
-                 //if there a match get infowindow info from foursquare else from google places
-                 if (venueID === false || venueDetail === false || venueID === undefined || venueDetail === undefined) {
-                     console.log(venueID);
-                 } else {
-                     console.log(venueDetail.id);
-                 }
+                             urlDetails = venuesDetailsUrl + venueID + auths;
 
-                 infoWindow.setContent(place.name);
-                 infoWindow.open(map, this);
-             });
-         }
+                             //************** Foursqure details  **************
+                             //request jason from foursquare
+                             $.ajax({
 
+                                 url: urlDetails,
+                                 success: function(json2) {
+                                     if (!$.isEmptyObject(json2.response.venue)) {
+                                         //venue id
+                                         venueDetail = json2.response.venue;
+                                     } else {
+                                         venueDetail = false;
+                                     }
+                                     console.log(venueDetail.id);
+                                 },
 
-         //************** Get Venue ID **************
+                                 error: function() {
+                                     venueDetail = false;
+                                 }
+                             });
+                             //***** /Foursqure details  *****
 
-         function getVenueID(place) {
-             //set request url
-             var url = searchUrl + "&ll=" + place.geometry.location.lat() + "," + place.geometry.location.lng() + "&query=" + place.name + "&limit=1";
-             var venueID;
-             //request jason from foursquare
-             // $.getJSON(url)
-             //     .done(function(json) {
-             //         if (json.response.venues.length !== 0) {
-             //             //venue id
-             //             venueID =  json.response.venues[0].id;
-             //         } else {
-             //             venueID =  false;
-             //         }
+                         } else {
+                             venueID = false;
+                         }
+                         console.log(venueID);
 
-             //     }).fail(function() {
-             //         venueID =  false;
-             //     });
+                     },
+                     error: function() {
+                         venueID = false;
+                         console.log(venueID);
+                     },
+                     complete: function() {
+                         //check if there a match for place in foursquare 
+                         //if there a match get infowindow info from foursquare else from google places
+                         if (venueID === false || venueDetail === false || venueID === undefined || venueDetail === undefined) {
+                             //***** google infowindow *****
+                             console.log(venueID);
+                         } else {
+                             //***** Foursqure infowindow *****
+                             console.log(venueDetail.id);
+                         }
 
-             $.ajax({
-                 url: url,
+                         infoWindow.setContent(place.name);
+                         infoWindow.open(map, currentMarker);
 
-             }).always(function(json) {
-                 if (json.response.venues.length !== 0) {
-                     //venue id
-                     venueID = json.response.venues[0].id;
-                 } else {
-                     venueID = false;
-                 }
-                 console.log(venueID);
-             }).fail(function() {
-                 venueID = false;
-                 console.log(venueID);
-             });
-            
-         }
-         //************** Foursqure details  **************
-
-         function foursquareDetails(venueID) {
-             //set request url
-             var url = venuesDetailsUrl + venueID + auths;
-
-             //request jason from foursquare
-             $.getJSON(url)
-                 .done(function(json) {
-                     if (!$.isEmptyObject(json.response.venue)) {
-                         //venue id
-                         return json.response.venue;
-                     } else {
-                         return false;
                      }
-
-                 }).fail(function() {
-                     return false;
                  });
+                 //***** /Get Venue ID *****
 
+             });
          }
-         //************** Foursqure infowindow **************
 
-         //************** google infowindow **************
 
          //************** Handle Location Error Function **************
-
+     
          function handleLocationError(browserHasGeolocation, infoWindow, pos) {
              infoWindow.setPosition(pos);
              infoWindow.setContent(browserHasGeolocation ?
@@ -260,6 +247,7 @@
          });
 
          //************** Get Formated YYYYMMDD **************
+    
          function getV(currentDate) {
              var yyyy = currentDate.getFullYear().toString();
              var mm = currentDate.getMonth() + 1;
