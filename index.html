@@ -21,7 +21,6 @@
     <!-- knockout framework -->
     <script src="js/knockout-3.4.2.js"></script>
     <!-- google map -->
-    <!-- <script async defer src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyD5Hk8aZ5BmdIHmAgt5tiEa2IaGOz_o9Sg"></script> -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5Hk8aZ5BmdIHmAgt5tiEa2IaGOz_o9Sg&libraries=places&callback=initMap" async defer></script>
     <!-- app -->
     <script src="js/app.js"></script>
@@ -59,11 +58,9 @@
                             <h4 data-bind="text: name"></h4></a>
                         <p>Rating: <span data-bind="text: rating"></span></p>
                         <div data-bind="if: phone">
-                        	<p>phone: <span data-bind="text: phone"></span></p>
+                            <p>phone: <span data-bind="text: phone"></span></p>
                         </div>
                         <p>Address: <span data-bind="text: address"></span></p>
-
-                        
                     </div>
                     <div class="place-img col-md-3">
                         <div class="limit">
@@ -90,6 +87,65 @@
         </footer>
         <!-- ********************** footer ********************** -->
     </div>
+   
+<!-- <div class="place-img row">
+    <div class="limit col-md-12">
+        <img class="img-responsive " src="%photo%" alt="%name%">
+    </div>
+</div>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="%url%">%name%</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="https://maps.google.com/"><img class="img-responsive inline-block" src="img/google.png" alt="google maps" height="30" width="30"></a>
+            </li>
+        </ul>
+    </div>
+    
+</nav>
+<div class="row">
+    <div class="text-info col-md-12">
+        <p>Rating: <span>%rating%</span></p>
+        <p>phone: <span>%phone%</span></p>
+        <p>Address: <span>%address%</span></p>
+    </div>
+</div> -->
+
+
+
+<!-- <div class="place-img row">
+    <div class="limit col-md-12">
+        <img class="img-responsive " src="%photo%" alt="%name%">
+    </div>
+</div>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="%url%">%name%</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="https://foursquare.com//"><img class="img-responsive inline-block" src="img/foursqare.png" alt="google maps" height="30" width="30"></a>
+            </li>
+        </ul>
+    </div>
+    
+</nav>
+<div class="row">
+    <div class="text-info col-md-12">
+        <p>Rating: <span>%rating%</span></p>
+        <p>phone: <span>%phone%</span></p>
+        <p>Address: <span>%address%</span></p>
+    </div>
+</div>
+ -->
+
+
 </body>
+
+
 
 </html>

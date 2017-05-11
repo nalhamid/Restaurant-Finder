@@ -47,3 +47,11 @@ footer {
     padding-right: 0;
     padding-left: 0;
 }
+
+.window-title{
+  background-color: #54b4eb;
+}
+
+.window-title .col-md-10 h3{
+  color: #fff;
+}

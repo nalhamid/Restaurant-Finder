@@ -104,7 +104,7 @@
          }
 
          //************** callback function (list of restaurants) **************
-     
+
          //results of the search query in getNearRestaurants() function
          function callback(results, status) {
 
@@ -127,7 +127,7 @@
          }
 
          //************** Get Restaurant Details Function **************
-  
+
          function getDetails(place, status) {
 
              //check status of the request
@@ -141,7 +141,7 @@
          }
 
          //************** Create Marker Function **************
-    
+
          function createMarker(place) {
              //get place location
              var placeLoc = place.geometry.location;
@@ -161,8 +161,11 @@
                  var urlID = searchUrl + "&ll=" + place.geometry.location.lat() + "," + place.geometry.location.lng() + "&query=" + place.name + "&limit=1";
                  var urlDetails; // = venuesDetailsUrl + venueID + auths;
                  var currentMarker = this;
+                 var infoContents ;
+                 var googleContents = '<div class="place-img row"> <div class="limit col-md-12"> <img class="img-responsive " src="%photo%" alt="%name%"> </div> </div> <nav class="navbar navbar-default"> <div class="container-fluid"> <div class="navbar-header"> <a class="navbar-brand" href="%url%">%name%</a> </div> <ul class="nav navbar-nav navbar-right"> <li> <a href="https://maps.google.com/"><img class="img-responsive inline-block" src="img/google.png" alt="google maps" height="30" width="30"></a> </li> </ul> </div> </nav> <div class="row"> <div class="text-info col-md-12"> <p>Rating: <span>%rating%</span></p> <p>phone: <span>%phone%</span></p> <p>Address: <span>%address%</span></p> </div> </div>';
+                 var foursquareContents = '<div class="place-img row"> <div class="limit col-md-12"> <img class="img-responsive " src="%photo%" alt="%name%"> </div> </div> <nav class="navbar navbar-default"> <div class="container-fluid"> <div class="navbar-header"> <a class="navbar-brand" href="%url%">%name%</a> </div> <ul class="nav navbar-nav navbar-right"> <li> <a href="https://www.google.com.sa/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwj9t_KL4OjTAhULuhoKHQJ_CoAQFgglMAA&url=https%3A%2F%2Fmaps.google.com%2F&usg=AFQjCNFuPY2Aj2NOPEsGecppA7LUkWB7YA&sig2=-qVhAW0Q-fcu2VW5uGvRkA"><img class="img-responsive inline-block" src="img/google.png" alt="google maps" height="15" width="15"></a> </li> </ul> </div> </nav> <div class="row"> <div class="text-info col-md-12"> <p>Rating: <span>%rating%</span></p> <p>phone: <span>%phone%</span></p> <p>Address: <span>%address%</span></p> </div> </div>';
 
-                 //***** Get Venue ID *****
+                 //***** Get Venue ID ***** 
                  $.ajax({
                      url: urlID,
                      // async: false
@@ -185,11 +188,30 @@
                                      } else {
                                          venueDetail = false;
                                      }
-                                     console.log(venueDetail.id);
+                                     console.log(venueDetail);
                                  },
 
                                  error: function() {
                                      venueDetail = false;
+                                 },
+                                 complete: function() {
+                                     //check if there a match for place in foursquare 
+                                     //if there a match get infowindow info from foursquare else from google places
+                                     if (venueID === false || venueDetail === false || venueID === undefined || venueDetail === undefined) {
+                                         //***** google infowindow *****
+                                         infoContents = googleContents.replace(/%name%/g, place.name).replace("%address%", place.formatted_address).replace("%rating%", place.rating).replace("%phone%", place.formatted_phone_number).replace("%photo%", place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 })).replace("%url%", place.url);
+                                         console.log("google");
+                                     } else {
+                                         //***** Foursqure infowindow *****
+                                         var address = "";
+                                 infoContents = foursquareContents.replace(/%name%/g, venueDetail.name).replace("%address%", venueDetail.location.formattedAddress.join(", ")).replace("%rating%", place.rating).replace("%phone%", place.formatted_phone_number).replace("%photo%", place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 })).replace("%url%", place.url);
+
+                                         console.log("venueDetail");
+                                     }
+
+                                     infoWindow.setContent(infoContents);
+                                     infoWindow.open(map, currentMarker);
+
                                  }
                              });
                              //***** /Foursqure details  *****
@@ -204,21 +226,7 @@
                          venueID = false;
                          console.log(venueID);
                      },
-                     complete: function() {
-                         //check if there a match for place in foursquare 
-                         //if there a match get infowindow info from foursquare else from google places
-                         if (venueID === false || venueDetail === false || venueID === undefined || venueDetail === undefined) {
-                             //***** google infowindow *****
-                             console.log(venueID);
-                         } else {
-                             //***** Foursqure infowindow *****
-                             console.log(venueDetail.id);
-                         }
 
-                         infoWindow.setContent(place.name);
-                         infoWindow.open(map, currentMarker);
-
-                     }
                  });
                  //***** /Get Venue ID *****
 
@@ -227,7 +235,7 @@
 
 
          //************** Handle Location Error Function **************
-     
+
          function handleLocationError(browserHasGeolocation, infoWindow, pos) {
              infoWindow.setPosition(pos);
              infoWindow.setContent(browserHasGeolocation ?
@@ -247,7 +255,7 @@
          });
 
          //************** Get Formated YYYYMMDD **************
-    
+
          function getV(currentDate) {
              var yyyy = currentDate.getFullYear().toString();
              var mm = currentDate.getMonth() + 1;
@@ -261,5 +269,4 @@
              }
              return yyyy + mm + dd;
          }
-
      }
