@@ -63,8 +63,8 @@
                         <p>Address: <span data-bind="text: address"></span></p>
                     </div>
                     <div class="place-img col-md-3">
-                        <div class="limit">
-                            <img class="img-responsive" data-bind="attr:{src: photo, alt: name}">
+                        <div class="limit-list">
+                            <img class="img-responsive list-img" data-bind="attr:{src: photo, alt: name}">
                         </div>
                     </div>
                 </div>
@@ -88,9 +88,12 @@
         <!-- ********************** footer ********************** -->
     </div>
    
-<!-- <div class="place-img row">
+
+<!--    for infowindow customization 
+ -->
+ <!-- <div class="place-img row">
     <div class="limit col-md-12">
-        <img class="img-responsive " src="%photo%" alt="%name%">
+        <img class="img-responsive point-img" src="%photo%" alt="%name%">
     </div>
 </div>
 <nav class="navbar navbar-default">
@@ -118,7 +121,7 @@
 
 <!-- <div class="place-img row">
     <div class="limit col-md-12">
-        <img class="img-responsive " src="%photo%" alt="%name%">
+        <img class="img-responsive point-img" src="%photo%" alt="%name%">
     </div>
 </div>
 <nav class="navbar navbar-default">
@@ -136,13 +139,21 @@
 </nav>
 <div class="row">
     <div class="text-info col-md-12">
-        <p>Rating: <span>%rating%</span></p>
-        <p>phone: <span>%phone%</span></p>
+        <p>Categories: <span>%categories%</span></p>
+        <p>Price: <span>%price%</span></p>
         <p>Address: <span>%address%</span></p>
     </div>
 </div>
- -->
 
+
+
+<div class="row">
+<h4 class="col-md-12">Reviews</h4>
+    <div class="tips col-md-12">
+        <p>%tip%</p>
+    </div>
+</div>
+ -->
 
 </body>
 
