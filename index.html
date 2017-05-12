@@ -39,10 +39,9 @@
                 <div id="filters" class="col-md-8">
                     <form class="navbar-form navbar-right">
                         <div class="form-group">
-                            <label for="searchText">text</label>
-                            <input type="text" class="form-control" id="searchText" placeholder="Ex: Google Office NYC or 75 9th Ave, New York, NY">
+                            <input type="text" class="form-control" id="searchText" placeholder="Ex: Riyadh,SA">
                         </div>
-                        <button type="submit" class="btn btn-default">Search</button>
+                        <input id="searchButton" type="button" class="btn btn-default" value="Search">
                     </form>
                 </div>
             </div>
@@ -64,7 +63,10 @@
                     </div>
                     <div class="place-img col-md-3">
                         <div class="limit-list">
-                            <img class="img-responsive list-img" data-bind="attr:{src: photo, alt: name}">
+                           <div class="list-img" data-bind="style: { backgroundImage: 'url('+ photo +')' }">
+                           	
+                           </div>
+                            <!-- <img class="img-responsive list-img" data-bind="attr:{src: photo, alt: name}"> -->
                         </div>
                     </div>
                 </div>

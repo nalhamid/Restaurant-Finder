@@ -7,6 +7,7 @@
      var currentDate = new Date();
 
      // ********************************* Initiate Map ****************************
+
      function initMap() {
 
          map = new google.maps.Map(document.getElementById('map'), {
@@ -14,30 +15,15 @@
              zoom: 12
          });
          infoWindow = new google.maps.InfoWindow();
+
+         // Create a searchbox in order to execute a places search
+         var searchBox = new google.maps.places.SearchBox(
+             document.getElementById('searchText'));
+         // Bias the searchbox to within the bounds of the map.
+         searchBox.setBounds(map.getBounds());
+
+
          ko.applyBindings(new AppViewModel());
-     }
-
-
-     // ********************************* Current Location ****************************
-     //get current location function 
-     function getCurrentLocation() {
-
-         if (navigator.geolocation) {
-             navigator.geolocation.getCurrentPosition(function(position) {
-                 pos = {
-                     lat: position.coords.latitude,
-                     lng: position.coords.longitude
-                 };
-
-                 map.setCenter(pos);
-             }, function() {
-                 handleLocationError(true, infoWindow, map.getCenter());
-             });
-         } else {
-             // Browser doesn't support Geolocation
-             handleLocationError(false, infoWindow, map.getCenter());
-         }
-
      }
 
 
@@ -52,9 +38,14 @@
          self.place_id = place.place_id;
          self.rating = place.rating;
          self.phone = place.formatted_phone_number;
-         self.photo = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
          self.url = place.url;
 
+         if (!$.isEmptyObject(place.photos)) {
+             self.photo = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
+         } else {
+             //default image
+             self.photo = "img/thumb_image_not_available.png";
+         }
 
      }
 
@@ -89,6 +80,30 @@
 
          //get near restaurants 
          getNearRestaurants();
+
+
+         // ********************************* Current Location ****************************
+         //get current location function 
+         function getCurrentLocation() {
+
+             if (navigator.geolocation) {
+                 navigator.geolocation.getCurrentPosition(function(position) {
+                     pos = {
+                         lat: position.coords.latitude,
+                         lng: position.coords.longitude
+                     };
+
+                     map.setCenter(pos);
+                 }, function() {
+                     handleLocationError(true, infoWindow, map.getCenter());
+                 });
+             } else {
+                 // Browser doesn't support Geolocation
+                 handleLocationError(false, infoWindow, map.getCenter());
+             }
+
+         }
+
 
          //************** Near Restaurants Function **************
          function getNearRestaurants() {
@@ -326,5 +341,39 @@
                  mm = '0' + mm;
              }
              return yyyy + mm + dd;
+         }
+         //************** Search **************
+
+         //search event listener
+         document.getElementById('searchButton').addEventListener('click', function() {
+             searchPlace();
+         });
+
+         //search function
+         function searchPlace() {
+             // Initialize the geocoder.
+             var geocoder = new google.maps.Geocoder();
+             // Get the address or place that the user entered.
+             var address = document.getElementById('searchText').value;
+             // Make sure the address isn't blank.
+             if (address == '') {
+                 window.alert('You must enter an area, or address.');
+             } else {
+                 // Geocode the address/area entered to get the center. Then, center the map
+                 // on it and zoom in
+                 geocoder.geocode({
+                     address: address,
+
+                 }, function(results, status) {
+                     if (status == google.maps.GeocoderStatus.OK) {
+                         pos = map.getCenter();
+                         map.setCenter(results[0].geometry.location);
+                         map.setZoom(15);
+                     } else {
+                         window.alert('We could not find that location - try entering a more' +
+                             ' specific place.');
+                     }
+                 });
+             }
          }
      }
