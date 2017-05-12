@@ -7,6 +7,6 @@ Web app search nearby restaurants by using google maps and foursquare
 * Download or clone repo 
 * open index.html by you favorite browser
 
-##Screenshot
+## Screenshot
 
 ![Screen Shot](img/Screen.png)
