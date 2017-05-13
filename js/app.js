@@ -12,7 +12,7 @@
 
          map = new google.maps.Map(document.getElementById('map'), {
              center: pos,
-             zoom: 12
+             zoom: 13
          });
          infoWindow = new google.maps.InfoWindow();
 
@@ -27,6 +27,14 @@
      }
 
 
+     // ********************************* google map error ****************************
+
+     function googleError() {
+         // show message to user
+
+         $("#map").append("<p>Unable to load map from google please try again</p>");
+     }
+
      // ********************************* Construct Restaurant ****************************
 
      function createRestaurant(place) {
@@ -39,6 +47,7 @@
          self.rating = place.rating;
          self.phone = place.formatted_phone_number;
          self.url = place.url;
+         self.marker = place.marker;
 
          if (!$.isEmptyObject(place.photos)) {
              self.photo = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
@@ -58,6 +67,15 @@
          //create restaurant icon for map
          var image = {
              url: 'img/icon2.png',
+             size: new google.maps.Size(32, 32),
+             origin: new google.maps.Point(0, 0),
+             anchor: new google.maps.Point(0, 32),
+             scaledSize: new google.maps.Size(37, 37)
+         };
+
+         //create restaurant icon for map
+         var imageActive = {
+             url: 'img/active.png',
              size: new google.maps.Size(32, 32),
              origin: new google.maps.Point(0, 0),
              anchor: new google.maps.Point(0, 32),
@@ -127,8 +145,15 @@
 
                  service = new google.maps.places.PlacesService(map);
 
-                 //empty observable array of resulted places
-                 self.restaurants.removeAll();
+                 //remove old markers
+                 ///empty observable array of resulted places except current open marker
+                 self.restaurants().forEach(function(place) {
+                     if (infoWindow.anchor != place.marker)
+                         place.marker.setMap(null);
+                     self.restaurants.remove(place);
+
+                 });
+
 
                  // iterate restaurants in results
                  for (var i = 0; i < results.length; i++) {
@@ -140,6 +165,7 @@
                  }
              }
          }
+
 
          //************** Get Restaurant Details Function **************
 
@@ -158,153 +184,41 @@
          //************** Create Marker Function **************
 
          function createMarker(place) {
-             //get place location
-             var placeLoc = place.geometry.location;
 
              //create marker variable
-             var marker = new google.maps.Marker({
+             place.marker = new google.maps.Marker({
                  map: map,
                  position: place.geometry.location,
+                 animation: google.maps.Animation.DROP,
                  icon: image
              });
 
              //event listener of marker click
-             google.maps.event.addListener(marker, 'click', function() {
-                 //TODO info window
-                 var venueID;
-                 var venueDetail;
-                 var urlID = searchUrl + "&ll=" + place.geometry.location.lat() + "," + place.geometry.location.lng() + "&query=" + place.name + "&limit=1";
-                 var urlDetails; // = venuesDetailsUrl + venueID + auths;
-                 var currentMarker = this;
-                 var infoContents;
-                 var googleContents = '<div class="place-img row"> <div class="limit col-md-12"> <img class="img-responsive point-img" src="%photo%" alt="%name%"> </div> </div> <nav class="navbar navbar-default"> <div class="container-fluid"> <div class="navbar-header"> <a class="navbar-brand" href="%url%">%name%</a> </div> <ul class="nav navbar-nav navbar-right"> <li> <a href="https://maps.google.com/"><img class="img-responsive inline-block" src="img/google.png" alt="google maps" height="30" width="30"></a> </li> </ul> </div> </nav> <div class="row"> <div class="text-info col-md-12"> <p>Rating: <span>%rating%</span></p> <p>phone: <span>%phone%</span></p> <p>Address: <span>%address%</span></p> </div> </div>';
-                 var foursquareContents = '<div class="place-img row"> <div class="limit col-md-12"> <img class="img-responsive point-img" src="%photo%" alt="%name%"> </div> </div> <nav class="navbar navbar-default"> <div class="container-fluid"> <div class="navbar-header"> <a class="navbar-brand" href="%url%">%name%</a> </div> <ul class="nav navbar-nav navbar-right"> <li> <a href="https://foursquare.com//"><img class="img-responsive inline-block" src="img/foursqare.png" alt="google maps" height="30" width="30"></a> </li> </ul> </div> </nav> <div class="row"> <div class="text-info col-md-12"> <p>Categories: <span>%categories%</span></p> <p>Price: <span>%price%</span></p> <p>Address: <span>%address%</span></p> </div> </div>';
+             google.maps.event.addListener(place.marker, 'click', function() {
 
-                 //***** Get Venue ID ***** 
-                 $.ajax({
-                     url: urlID,
-                     // async: false
-                     success: function(json) {
-                         if (json.response.venues.length !== 0) {
-                             //venue id
-                             venueID = json.response.venues[0].id;
+                 self.popInfowindow(place);
+             });
 
-                             urlDetails = venuesDetailsUrl + venueID + auths;
+             //event listener of marker mouseover color change
+             place.marker.addListener('mouseover', function() {
+                 self.makeActiveIcon(place);
+             });
 
-                             //************** Foursqure details  **************
-                             //request jason from foursquare
-                             $.ajax({
-
-                                 url: urlDetails,
-                                 success: function(json2) {
-                                     if (!$.isEmptyObject(json2.response.venue)) {
-                                         //venue id
-                                         venueDetail = json2.response.venue;
-                                     } else {
-                                         venueDetail = false;
-                                     }
-
-                                 },
-
-                                 error: function() {
-                                     venueDetail = false;
-                                 },
-                                 complete: function() {
-
-
-                                     //default image
-                                     var image = "img/No_image_available.png";
-
-                                     //review html template 
-                                     var reviews = '<div class="row"> <h4 class="col-md-12">Reviews</h4>';
-                                     var tipTemplate = '<div class="tips col-md-12"> <p>%tip%</p> </div>';
-
-                                     //check if there a match for place in foursquare 
-                                     //if there a match get infowindow info from foursquare else from google places
-                                     if (venueID === false || venueDetail === false || venueID === undefined || venueDetail === undefined) {
-                                         //***** google infowindow *****
-
-                                         //get photo url
-                                         if (place.photos.length !== 0) {
-                                             image = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
-                                         }
-
-                                         //get reviews
-                                         if (place.reviews.length !== 0) {
-                                             place.reviews.forEach(function(tip) {
-                                                 reviews += tipTemplate.replace("%tip%", tip.text);
-                                             });
-                                         } else {
-                                             reviews += tipTemplate.replace("%tip%", "No reviews available");
-                                         }
-                                         reviews += "</div>";
-
-
-                                         //set complete infowindow html 
-                                         infoContents = googleContents.replace(/%name%/g, place.name).replace("%address%", place.formatted_address).replace("%rating%", place.rating).replace("%phone%", place.formatted_phone_number).replace("%photo%", image).replace("%url%", place.url);
-                                         infoContents += reviews;
-
-                                     } else {
-                                         //***** Foursqure infowindow *****
-
-                                         //get categories
-                                         var categories = "";
-                                         venueDetail.categories.forEach(function(category) {
-                                             categories += category.name + ", ";
-                                         });
-
-                                         //get photo url
-                                         if (venueDetail.photos.count > 0) {
-                                             image = venueDetail.bestPhoto.prefix + "width300" + venueDetail.bestPhoto.suffix;
-                                         }
-
-                                         //get price
-                                         var price = "not available";
-                                         if (!$.isEmptyObject(venueDetail.price)) {
-                                             //venue id
-                                             price = venueDetail.price.message;
-                                         }
-
-
-                                         //get reviews
-                                         if (venueDetail.tips.count > 0) {
-                                             venueDetail.tips.groups[0].items.forEach(function(tip) {
-                                                 reviews += tipTemplate.replace("%tip%", tip.text);
-                                             });
-                                         } else {
-                                             reviews += tipTemplate.replace("%tip%", "No reviews available");
-                                         }
-                                         reviews += "</div>";
-
-                                         //set complete infowindow html 
-                                         infoContents = foursquareContents.replace(/%name%/g, venueDetail.name).replace("%address%", venueDetail.location.formattedAddress.join(", ")).replace("%price%", venueDetail.price.message + " " + venueDetail.price.currency).replace("%categories%", categories).replace("%photo%", image).replace("%url%", venueDetail.canonicalUrl);
-                                         infoContents += reviews;
-
-                                     }
-
-                                     infoWindow.setContent(infoContents);
-                                     infoWindow.open(map, currentMarker);
-
-                                 }
-                             });
-                             //***** /Foursqure details  *****
-
-                         } else {
-                             venueID = false;
-                         }
-
-
-                     },
-                     error: function() {
-                         venueID = false;
-
-                     },
-
-                 });
-                 //***** /Get Venue ID *****
-
+             //event listener of marker mouseout color change
+             place.marker.addListener('mouseout', function() {
+                 self.makeDefaultIcon(place);
              });
          }
+
+         //************** change marker Icon colors **************
+
+         self.makeActiveIcon = function(place) {
+             place.marker.setIcon(imageActive);
+         };
+
+         self.makeDefaultIcon = function(place) {
+             place.marker.setIcon(image);
+         };
 
 
          //************** Handle Location Error Function **************
@@ -327,6 +241,141 @@
 
          });
 
+         //************** Pop Infowindow **************
+         self.popInfowindow = function (place) {
+             
+             var venueID;
+             var venueDetail;
+             var urlID = searchUrl + "&ll=" + place.geometry.location.lat() + "," + place.geometry.location.lng() + "&query=" + place.name + "&limit=1";
+             var urlDetails; // = venuesDetailsUrl + venueID + auths;
+             var infoContents;
+             var googleContents = '<div class="place-img row"> <div class="limit col-md-12"> <img class="img-responsive point-img" src="%photo%" alt="%name%"> </div> </div> <nav class="navbar navbar-default"> <div class="container-fluid"> <div class="navbar-header"> <a class="navbar-brand" href="%url%">%name%</a> </div> <ul class="nav navbar-nav navbar-right"> <li> <a href="https://maps.google.com/"><img class="img-responsive inline-block" src="img/google.png" alt="google maps" height="30" width="30"></a> </li> </ul> </div> </nav> <div class="row"> <div class="text-info col-md-12"> <p>Rating: <span>%rating%</span></p> <p>phone: <span>%phone%</span></p> <p>Address: <span>%address%</span></p> </div> </div>';
+             var foursquareContents = '<div class="place-img row"> <div class="limit col-md-12"> <img class="img-responsive point-img" src="%photo%" alt="%name%"> </div> </div> <nav class="navbar navbar-default"> <div class="container-fluid"> <div class="navbar-header"> <a class="navbar-brand" href="%url%">%name%</a> </div> <ul class="nav navbar-nav navbar-right"> <li> <a href="https://foursquare.com//"><img class="img-responsive inline-block" src="img/foursqare.png" alt="google maps" height="30" width="30"></a> </li> </ul> </div> </nav> <div class="row"> <div class="text-info col-md-12"> <p>Categories: <span>%categories%</span></p> <p>Price: <span>%price%</span></p> <p>Address: <span>%address%</span></p> </div> </div>';
+
+             //***** Get Venue ID ***** 
+             $.ajax({
+                 url: urlID,
+                 // async: false
+                 success: function(json) {
+                     if (json.response.venues.length !== 0) {
+                         //venue id
+                         venueID = json.response.venues[0].id;
+
+                         urlDetails = venuesDetailsUrl + venueID + auths;
+
+                         //************** Foursqure details  **************
+                         //request jason from foursquare
+                         $.ajax({
+
+                             url: urlDetails,
+                             success: function(json2) {
+                                 if (!$.isEmptyObject(json2.response.venue)) {
+                                     //venue id
+                                     venueDetail = json2.response.venue;
+                                 } else {
+                                     venueDetail = false;
+                                 }
+
+                             },
+
+                             error: function() {
+                                 venueDetail = false;
+                             },
+                             complete: function() {
+
+
+                                 //default image
+                                 var image = "img/No_image_available.png";
+
+                                 //review html template 
+                                 var reviews = '<div class="row"> <h4 class="col-md-12">Reviews</h4>';
+                                 var tipTemplate = '<div class="tips col-md-12"> <p>%tip%</p> </div>';
+
+                                 //check if there a match for place in foursquare 
+                                 //if there a match get infowindow info from foursquare else from google places
+                                 if (venueID === false || venueDetail === false || venueID === undefined || venueDetail === undefined) {
+                                     //***** google infowindow *****
+
+                                     //get photo url
+                                     if (place.photos.length !== 0) {
+                                         image = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
+                                     }
+
+                                     //get reviews
+                                     if (place.reviews.length !== 0) {
+                                         place.reviews.forEach(function(tip) {
+                                             reviews += tipTemplate.replace("%tip%", tip.text);
+                                         });
+                                     } else {
+                                         reviews += tipTemplate.replace("%tip%", "No reviews available");
+                                     }
+                                     reviews += "</div>";
+
+
+                                     //set complete infowindow html 
+                                     infoContents = googleContents.replace(/%name%/g, place.name).replace("%address%", place.formatted_address).replace("%rating%", place.rating).replace("%phone%", place.formatted_phone_number).replace("%photo%", image).replace("%url%", place.url);
+                                     infoContents += reviews;
+
+                                 } else {
+                                     //***** Foursqure infowindow *****
+
+                                     //get categories
+                                     var categories = "";
+                                     venueDetail.categories.forEach(function(category) {
+                                         categories += category.name + ", ";
+                                     });
+
+                                     //get photo url
+                                     if (venueDetail.photos.count > 0) {
+                                         image = venueDetail.bestPhoto.prefix + "width300" + venueDetail.bestPhoto.suffix;
+                                     }
+
+                                     //get price
+                                     var price = "not available";
+                                     if (!$.isEmptyObject(venueDetail.price)) {
+                                         //venue id
+                                         price = venueDetail.price.message;
+                                     }
+
+
+                                     //get reviews
+                                     if (venueDetail.tips.count > 0) {
+                                         venueDetail.tips.groups[0].items.forEach(function(tip) {
+                                             reviews += tipTemplate.replace("%tip%", tip.text);
+                                         });
+                                     } else {
+                                         reviews += tipTemplate.replace("%tip%", "No reviews available");
+                                     }
+                                     reviews += "</div>";
+
+                                     //set complete infowindow html 
+                                     infoContents = foursquareContents.replace(/%name%/g, venueDetail.name).replace("%address%", venueDetail.location.formattedAddress.join(", ")).replace("%price%", venueDetail.price.message + " " + venueDetail.price.currency).replace("%categories%", categories).replace("%photo%", image).replace("%url%", venueDetail.canonicalUrl);
+                                     infoContents += reviews;
+
+                                 }
+
+                                 infoWindow.setContent(infoContents);
+                                 infoWindow.open(map, place.marker);
+
+                             }
+                         });
+                         //***** /Foursqure details  *****
+
+                     } else {
+                         venueID = false;
+                     }
+
+
+                 },
+                 error: function() {
+                     venueID = false;
+
+                 },
+
+             });
+             //***** /Get Venue ID *****
+         };
+
          //************** Get Formated YYYYMMDD **************
 
          function getV(currentDate) {
@@ -344,13 +393,8 @@
          }
          //************** Search **************
 
-         //search event listener
-         document.getElementById('searchButton').addEventListener('click', function() {
-             searchPlace();
-         });
-
          //search function
-         function searchPlace() {
+         searchPlace = function() {
              // Initialize the geocoder.
              var geocoder = new google.maps.Geocoder();
              // Get the address or place that the user entered.

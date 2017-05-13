@@ -20,10 +20,10 @@
     <script src="js/bootstrap.min.js"></script>
     <!-- knockout framework -->
     <script src="js/knockout-3.4.2.js"></script>
-    <!-- google map -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5Hk8aZ5BmdIHmAgt5tiEa2IaGOz_o9Sg&libraries=places&callback=initMap" async defer></script>
     <!-- app -->
     <script src="js/app.js"></script>
+    <!-- google map -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5Hk8aZ5BmdIHmAgt5tiEa2IaGOz_o9Sg&libraries=places&callback=initMap" async defer onerror="googleError()"></script>
 </head>
 
 <body>
@@ -41,7 +41,7 @@
                         <div class="form-group">
                             <input type="text" class="form-control" id="searchText" placeholder="Ex: Riyadh,SA">
                         </div>
-                        <input id="searchButton" type="button" class="btn btn-default" value="Search">
+                        <input id="searchButton" type="button" class="btn btn-default" value="Search" data-bind="click: searchPlace">
                     </form>
                 </div>
             </div>
@@ -51,8 +51,8 @@
         <div id="main-content" class="row">
             <!-- ********************** restaurants-list ********************** -->
             <div id="restaurants-list" class="col-md-4 no-gutter" data-bind="foreach: restaurants">
-                <div class="restaurantInfo col-md-12 no-gutter">
-                    <div class="text-info col-md-9">
+                <div class="restaurantInfo col-md-12 no-gutter" data-bind="event: { mouseover: $parent.makeActiveIcon, mouseout: $parent.makeDefaultIcon }">
+                    <div class="text-info col-md-9" >
                         <a data-bind="attr: { href: url, title: name }">
                             <h4 data-bind="text: name"></h4></a>
                         <p>Rating: <span data-bind="text: rating"></span></p>
@@ -88,68 +88,7 @@
         </footer>
         <!-- ********************** footer ********************** -->
     </div>
-    <!--    for infowindow customization 
- -->
-    <!-- <div class="place-img row">
-    <div class="limit col-md-12">
-        <img class="img-responsive point-img" src="%photo%" alt="%name%">
-    </div>
-</div>
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="%url%">%name%</a>
-        </div>
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a href="https://maps.google.com/"><img class="img-responsive inline-block" src="img/google.png" alt="google maps" height="30" width="30"></a>
-            </li>
-        </ul>
-    </div>
-    
-</nav>
-<div class="row">
-    <div class="text-info col-md-12">
-        <p>Rating: <span>%rating%</span></p>
-        <p>phone: <span>%phone%</span></p>
-        <p>Address: <span>%address%</span></p>
-    </div>
-</div> -->
-    <!-- <div class="place-img row">
-    <div class="limit col-md-12">
-        <img class="img-responsive point-img" src="%photo%" alt="%name%">
-    </div>
-</div>
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="%url%">%name%</a>
-        </div>
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a href="https://foursquare.com//"><img class="img-responsive inline-block" src="img/foursqare.png" alt="google maps" height="30" width="30"></a>
-            </li>
-        </ul>
-    </div>
-    
-</nav>
-<div class="row">
-    <div class="text-info col-md-12">
-        <p>Categories: <span>%categories%</span></p>
-        <p>Price: <span>%price%</span></p>
-        <p>Address: <span>%address%</span></p>
-    </div>
-</div>
-
-
-
-<div class="row">
-<h4 class="col-md-12">Reviews</h4>
-    <div class="tips col-md-12">
-        <p>%tip%</p>
-    </div>
-</div>
- -->
+   
 </body>
 
 </html>
