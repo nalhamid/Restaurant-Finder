@@ -51,7 +51,7 @@
         <div id="main-content" class="row">
             <!-- ********************** restaurants-list ********************** -->
             <div id="restaurants-list" class="col-md-4 no-gutter" data-bind="foreach: restaurants">
-                <div class="restaurantInfo col-md-12 no-gutter" data-bind="event: { mouseover: $parent.makeActiveIcon, mouseout: $parent.makeDefaultIcon }">
+                <div class="restaurantInfo col-md-12 no-gutter" data-bind="event: { mouseover: $parent.makeActiveIcon, mouseout: $parent.makeDefaultIcon }, click: $parent.popInfowindow">
                     <div class="text-info col-md-9" >
                         <a data-bind="attr: { href: url, title: name }">
                             <h4 data-bind="text: name"></h4></a>
@@ -70,6 +70,7 @@
                     </div>
                 </div>
             </div>
+            <!-- data-bind="click: $parent.popInfowindow(json)" -->
             <!-- ********************** /restaurants-list ********************** -->
             <!-- ********************** map ********************** -->
             <div id="map-container" class="col-md-8 embed-responsive">

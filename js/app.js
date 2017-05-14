@@ -5,6 +5,8 @@
      var service;
      var pos = { lat: 24.7241504, lng: 46.2620616 };
      var currentDate = new Date();
+     var image;
+     var imageActive;
 
      // ********************************* Initiate Map ****************************
 
@@ -30,8 +32,8 @@
      // ********************************* google map error ****************************
 
      function googleError() {
+         
          // show message to user
-
          $("#map").append("<p>Unable to load map from google please try again</p>");
      }
 
@@ -47,13 +49,30 @@
          self.rating = place.rating;
          self.phone = place.formatted_phone_number;
          self.url = place.url;
-         self.marker = place.marker;
+
+         //location
+         self.lat = place.geometry.location.lat();
+         self.lng = place.geometry.location.lng();
+
+
+         //create marker variable
+         self.marker = new google.maps.Marker({
+             map: map,
+             position: place.geometry.location,
+             animation: google.maps.Animation.DROP,
+             icon: image
+         });
+
+         //google reviews
+         self.reviews = place.reviews;
 
          if (!$.isEmptyObject(place.photos)) {
              self.photo = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
+             self.infoPhoto = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
          } else {
              //default image
              self.photo = "img/thumb_image_not_available.png";
+             self.infoPhoto = "img/No_image_available.png";
          }
 
      }
@@ -65,7 +84,7 @@
          var self = this;
 
          //create restaurant icon for map
-         var image = {
+         image = {
              url: 'img/icon2.png',
              size: new google.maps.Size(32, 32),
              origin: new google.maps.Point(0, 0),
@@ -74,7 +93,7 @@
          };
 
          //create restaurant icon for map
-         var imageActive = {
+         imageActive = {
              url: 'img/active.png',
              size: new google.maps.Size(32, 32),
              origin: new google.maps.Point(0, 0),
@@ -131,7 +150,7 @@
              //call text search of keyword "restaurant"
              service.textSearch({
                  location: pos,
-                 radius: 1000,
+                 bounds: map.getBounds(),
                  query: 'restaurant'
              }, callback);
          }
@@ -157,9 +176,7 @@
 
                  // iterate restaurants in results
                  for (var i = 0; i < results.length; i++) {
-                     // createMarker(results[i]);
-                     // self.restaurants.push(new createRestaurant(results[i]));
-
+                    
                      //get restaurant details  
                      service.getDetails({ placeId: results[i].place_id }, getDetails);
                  }
@@ -173,25 +190,21 @@
 
              //check status of the request
              if (status == google.maps.places.PlacesServiceStatus.OK) {
+
+                 //create restaurant object
+                 var restaurant = new createRestaurant(place);
+
                  //call create market
-                 createMarker(place);
+                 createMarker(restaurant);
 
                  //add resturant to observable array 
-                 self.restaurants.push(new createRestaurant(place));
+                 self.restaurants.push(restaurant);
              }
          }
 
          //************** Create Marker Function **************
 
          function createMarker(place) {
-
-             //create marker variable
-             place.marker = new google.maps.Marker({
-                 map: map,
-                 position: place.geometry.location,
-                 animation: google.maps.Animation.DROP,
-                 icon: image
-             });
 
              //event listener of marker click
              google.maps.event.addListener(place.marker, 'click', function() {
@@ -242,11 +255,11 @@
          });
 
          //************** Pop Infowindow **************
-         self.popInfowindow = function (place) {
-             
+         self.popInfowindow = function(place) {
+
              var venueID;
              var venueDetail;
-             var urlID = searchUrl + "&ll=" + place.geometry.location.lat() + "," + place.geometry.location.lng() + "&query=" + place.name + "&limit=1";
+             var urlID = searchUrl + "&ll=" + place.lat + "," + place.lng + "&query=" + place.name + "&limit=1";
              var urlDetails; // = venuesDetailsUrl + venueID + auths;
              var infoContents;
              var googleContents = '<div class="place-img row"> <div class="limit col-md-12"> <img class="img-responsive point-img" src="%photo%" alt="%name%"> </div> </div> <nav class="navbar navbar-default"> <div class="container-fluid"> <div class="navbar-header"> <a class="navbar-brand" href="%url%">%name%</a> </div> <ul class="nav navbar-nav navbar-right"> <li> <a href="https://maps.google.com/"><img class="img-responsive inline-block" src="img/google.png" alt="google maps" height="30" width="30"></a> </li> </ul> </div> </nav> <div class="row"> <div class="text-info col-md-12"> <p>Rating: <span>%rating%</span></p> <p>phone: <span>%phone%</span></p> <p>Address: <span>%address%</span></p> </div> </div>';
@@ -296,10 +309,10 @@
                                  if (venueID === false || venueDetail === false || venueID === undefined || venueDetail === undefined) {
                                      //***** google infowindow *****
 
-                                     //get photo url
-                                     if (place.photos.length !== 0) {
-                                         image = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
-                                     }
+                                     // //get photo url
+                                     // if (place.photos.length !== 0) {
+                                     //     image = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
+                                     // }
 
                                      //get reviews
                                      if (place.reviews.length !== 0) {
@@ -313,7 +326,7 @@
 
 
                                      //set complete infowindow html 
-                                     infoContents = googleContents.replace(/%name%/g, place.name).replace("%address%", place.formatted_address).replace("%rating%", place.rating).replace("%phone%", place.formatted_phone_number).replace("%photo%", image).replace("%url%", place.url);
+                                     infoContents = googleContents.replace(/%name%/g, place.name).replace("%address%", place.address).replace("%rating%", place.rating).replace("%phone%", place.phone).replace("%photo%", place.infoPhoto).replace("%url%", place.url);
                                      infoContents += reviews;
 
                                  } else {
@@ -419,5 +432,5 @@
                      }
                  });
              }
-         }
+         };
      }
