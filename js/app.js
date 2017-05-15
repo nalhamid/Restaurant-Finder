@@ -32,7 +32,7 @@
      // ********************************* google map error ****************************
 
      function googleError() {
-         
+
          // show message to user
          $("#map").append("<p>Unable to load map from google please try again</p>");
      }
@@ -66,6 +66,7 @@
          //google reviews
          self.reviews = place.reviews;
 
+         //photo
          if (!$.isEmptyObject(place.photos)) {
              self.photo = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
              self.infoPhoto = place.photos[0].getUrl({ 'maxWidth': 400, 'maxHeight': 400 });
@@ -74,6 +75,9 @@
              self.photo = "img/thumb_image_not_available.png";
              self.infoPhoto = "img/No_image_available.png";
          }
+
+         //visibility 
+         self.visible = true;
 
      }
 
@@ -176,7 +180,7 @@
 
                  // iterate restaurants in results
                  for (var i = 0; i < results.length; i++) {
-                    
+
                      //get restaurant details  
                      service.getDetails({ placeId: results[i].place_id }, getDetails);
                  }
@@ -233,6 +237,15 @@
              place.marker.setIcon(image);
          };
 
+         //************** check if marker visable or not **************
+
+         self.isVisible = function(place) {
+             if (place.visible == false) {
+                 return false;
+             } else {
+                 return true;
+             }
+         };
 
          //************** Handle Location Error Function **************
 
