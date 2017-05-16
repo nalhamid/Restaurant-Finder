@@ -92,9 +92,14 @@ footer {
     font-weight: normal;
 }
 
+.listHover {
+    background-color: #eeeeee;
+    cursor:pointer;
+}
+
 @media only screen and (max-width: 750px) {
     body {
-        padding-top: 160px;
+        padding-top: 280px;
         /* padding-bottom: 50px; */
     }
 }

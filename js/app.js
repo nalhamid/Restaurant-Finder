@@ -77,7 +77,10 @@
          }
 
          //visibility 
-         self.visible = true;
+         self.isVisible = ko.observable(true);  
+
+         //hover list
+         self.isHover = ko.observable(false);
 
      }
 
@@ -171,9 +174,10 @@
                  //remove old markers
                  ///empty observable array of resulted places except current open marker
                  self.restaurants().forEach(function(place) {
-                     if (infoWindow.anchor != place.marker)
+                     if (infoWindow.anchor != place.marker) {
                          place.marker.setMap(null);
-                     self.restaurants.remove(place);
+                         self.restaurants.remove(place);
+                     }
 
                  });
 
@@ -184,6 +188,8 @@
                      //get restaurant details  
                      service.getDetails({ placeId: results[i].place_id }, getDetails);
                  }
+             }else{
+                $("#estaurants-list").append("<p>Unable to search for restaurants. please try again</p>");
              }
          }
 
@@ -203,6 +209,8 @@
 
                  //add resturant to observable array 
                  self.restaurants.push(restaurant);
+             }else{
+                $("#estaurants-list").append("<p>Unable to search for restaurants. please try again</p>");
              }
          }
 
@@ -231,10 +239,12 @@
 
          self.makeActiveIcon = function(place) {
              place.marker.setIcon(imageActive);
+             place.isHover(true);
          };
 
          self.makeDefaultIcon = function(place) {
              place.marker.setIcon(image);
+              place.isHover(false);
          };
 
          //************** check if marker visable or not **************
@@ -299,6 +309,7 @@
                                      //venue id
                                      venueDetail = json2.response.venue;
                                  } else {
+                                     //on error google info will popout
                                      venueDetail = false;
                                  }
 
@@ -388,12 +399,14 @@
                          //***** /Foursqure details  *****
 
                      } else {
+                        //on error google info will popout
                          venueID = false;
                      }
 
 
                  },
                  error: function() {
+                     //on error google info will popout
                      venueID = false;
 
                  },
@@ -446,4 +459,48 @@
                  });
              }
          };
+
+         //************** Filter **************
+
+         //filter function
+         filterPlaces = function() {
+             //get filter value
+             var text = document.getElementById('filterText').value.toLowerCase();
+
+             //loop of markers to filter array 
+             self.restaurants().forEach(function(place) {
+                 if (place.name.toLowerCase().search(text) != -1) {
+                     place.marker.setVisible(true);
+                     place.isVisible(true);
+                 } else {
+                     place.marker.setVisible(false);
+                     place.isVisible(false);
+                 }
+             });
+
+         };
+
+         //************** Hide **************
+
+         //hide function
+         hidePlaces = function() {
+             //loop to set markers to false and hide divs in list
+             self.restaurants().forEach(function(place) {
+                 place.marker.setVisible(false);
+                 place.isVisible(false);
+             });
+         };
+
+         //************** show **************
+
+         //show function
+         showPlaces = function() {
+             //loop to set markers to true and show divs in list
+             self.restaurants().forEach(function(place) {
+                 place.marker.setVisible(true);
+                 place.isVisible(true);
+             });
+         };
+
+
      }

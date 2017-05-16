@@ -1,6 +1,6 @@
 # Restaurant-Finder
 
-Web app search nearby restaurants by using google maps and foursquare
+Web app search and filter nearby restaurants by using google maps and foursquare
 
 ## How to run
 

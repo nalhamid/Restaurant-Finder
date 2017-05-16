@@ -38,10 +38,18 @@
                 <!-- search form -->
                 <div id="filters" class="col-md-8">
                     <form class="navbar-form navbar-right">
+                        <div class="form-group text-center">
+                            <input id="showButton" type="button" class="btn btn-default" value="Show All" data-bind="click: showPlaces">
+                            <input id="hideButton" type="button" class="btn btn-default" value="Hide All" data-bind="click: hidePlaces">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="filterText" placeholder="Ex: pizza" >
+                            <input id="filterButton" type="button" class="btn btn-default" value="Filter" data-bind="click: filterPlaces">
+                        </div>
                         <div class="form-group">
                             <input type="text" class="form-control" id="searchText" placeholder="Ex: Riyadh,SA">
+                            <input id="searchButton" type="button" class="btn btn-default" value="Search" data-bind="click: searchPlace">
                         </div>
-                        <input id="searchButton" type="button" class="btn btn-default" value="Search" data-bind="click: searchPlace">
                     </form>
                 </div>
             </div>
@@ -51,8 +59,8 @@
         <div id="main-content" class="row">
             <!-- ********************** restaurants-list ********************** -->
             <div id="restaurants-list" class="col-md-4 no-gutter" data-bind="foreach: restaurants">
-                <div class="restaurantInfo col-md-12 no-gutter" data-bind="event: { mouseover: $parent.makeActiveIcon, mouseout: $parent.makeDefaultIcon }, click: $parent.popInfowindow, style: { display: $parent.isVisible($data) ? '' : 'none' }">
-                    <div class="text-info col-md-9" >
+                <div class="restaurantInfo col-md-12 no-gutter" data-bind="event: { mouseover: $parent.makeActiveIcon, mouseout: $parent.makeDefaultIcon }, click: $parent.popInfowindow, visible: isVisible, css: {listHover : isHover }">
+                    <div class="text-info col-md-9">
                         <a data-bind="attr: { href: url, title: name }">
                             <h4 data-bind="text: name"></h4></a>
                         <p>Rating: <span data-bind="text: rating"></span></p>
@@ -89,7 +97,6 @@
         </footer>
         <!-- ********************** footer ********************** -->
     </div>
-   
 </body>
 
 </html>
