@@ -376,9 +376,7 @@
                                      var price = "not available";
                                      if (!$.isEmptyObject(venueDetail.price)) {
                                          //venue id
-                                         price = venueDetail.price.message;
-                                     } else {
-                                         price = "not available";
+                                         price = venueDetail.price.message + " " + venueDetail.price.currency;
                                      }
 
 
@@ -393,7 +391,7 @@
                                      reviews += "</div>";
 
                                      //set complete infowindow html 
-                                     infoContents = foursquareContents.replace(/%name%/g, venueDetail.name).replace("%address%", venueDetail.location.formattedAddress.join(", ")).replace("%price%", price + " " + venueDetail.price.currency).replace("%categories%", categories).replace("%photo%", image).replace("%url%", venueDetail.canonicalUrl);
+                                     infoContents = foursquareContents.replace(/%name%/g, venueDetail.name).replace("%address%", venueDetail.location.formattedAddress.join(", ")).replace("%price%", price).replace("%categories%", categories).replace("%photo%", image).replace("%url%", venueDetail.canonicalUrl);
                                      infoContents += reviews;
 
                                  }
