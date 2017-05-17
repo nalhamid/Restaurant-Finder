@@ -77,7 +77,7 @@
          }
 
          //visibility 
-         self.isVisible = ko.observable(true);  
+         self.isVisible = ko.observable(true);
 
          //hover list
          self.isHover = ko.observable(false);
@@ -125,7 +125,6 @@
          //get near restaurants 
          getNearRestaurants();
 
-
          // ********************************* Current Location ****************************
          //get current location function 
          function getCurrentLocation() {
@@ -138,9 +137,15 @@
                      };
 
                      map.setCenter(pos);
+
+                     //get near restaurants 
+                     getNearRestaurants();
+
                  }, function() {
                      handleLocationError(true, infoWindow, map.getCenter());
                  });
+
+
              } else {
                  // Browser doesn't support Geolocation
                  handleLocationError(false, infoWindow, map.getCenter());
@@ -188,8 +193,8 @@
                      //get restaurant details  
                      service.getDetails({ placeId: results[i].place_id }, getDetails);
                  }
-             }else{
-                $("#estaurants-list").append("<p>Unable to search for restaurants. please try again</p>");
+             } else {
+                 $("#estaurants-list").append("<p>Unable to search for restaurants. please try again</p>");
              }
          }
 
@@ -209,8 +214,8 @@
 
                  //add resturant to observable array 
                  self.restaurants.push(restaurant);
-             }else{
-                $("#estaurants-list").append("<p>Unable to search for restaurants. please try again</p>");
+             } else {
+                 $("#estaurants-list").append("<p>Unable to search for restaurants. please try again</p>");
              }
          }
 
@@ -244,7 +249,7 @@
 
          self.makeDefaultIcon = function(place) {
              place.marker.setIcon(image);
-              place.isHover(false);
+             place.isHover(false);
          };
 
          //************** check if marker visable or not **************
@@ -268,7 +273,7 @@
          }
 
          //event listener to map if bounds changed
-         map.addListener('bounds_changed', function() {
+         map.addListener('dragend', function() {
              //get new map center
              pos = map.getCenter();
 
@@ -372,6 +377,8 @@
                                      if (!$.isEmptyObject(venueDetail.price)) {
                                          //venue id
                                          price = venueDetail.price.message;
+                                     } else {
+                                         price = "not available";
                                      }
 
 
@@ -386,7 +393,7 @@
                                      reviews += "</div>";
 
                                      //set complete infowindow html 
-                                     infoContents = foursquareContents.replace(/%name%/g, venueDetail.name).replace("%address%", venueDetail.location.formattedAddress.join(", ")).replace("%price%", venueDetail.price.message + " " + venueDetail.price.currency).replace("%categories%", categories).replace("%photo%", image).replace("%url%", venueDetail.canonicalUrl);
+                                     infoContents = foursquareContents.replace(/%name%/g, venueDetail.name).replace("%address%", venueDetail.location.formattedAddress.join(", ")).replace("%price%", price + " " + venueDetail.price.currency).replace("%categories%", categories).replace("%photo%", image).replace("%url%", venueDetail.canonicalUrl);
                                      infoContents += reviews;
 
                                  }
@@ -399,7 +406,7 @@
                          //***** /Foursqure details  *****
 
                      } else {
-                        //on error google info will popout
+                         //on error google info will popout
                          venueID = false;
                      }
 

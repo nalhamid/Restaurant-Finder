@@ -10,3 +10,4 @@ Web app search and filter nearby restaurants by using google maps and foursquare
 ## Screenshot
 
 ![Screen Shot](img/Screen.png)
+![Screen Shot](img/Screen2.png)
