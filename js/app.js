@@ -14,7 +14,7 @@
 
          map = new google.maps.Map(document.getElementById('map'), {
              center: pos,
-             zoom: 13
+             zoom: 12
          });
          infoWindow = new google.maps.InfoWindow();
 
@@ -177,15 +177,11 @@
                  service = new google.maps.places.PlacesService(map);
 
                  //remove old markers
-                 ///empty observable array of resulted places except current open marker
+                 ///empty observable array of resulted places 
                  self.restaurants().forEach(function(place) {
-                     if (infoWindow.anchor != place.marker) {
-                         place.marker.setMap(null);
-                         self.restaurants.remove(place);
-                     }
-
+                     place.marker.setMap(null);
                  });
-
+                 self.restaurants.removeAll();
 
                  // iterate restaurants in results
                  for (var i = 0; i < results.length; i++) {
@@ -457,6 +453,7 @@
                          pos = map.getCenter();
                          map.setCenter(results[0].geometry.location);
                          map.setZoom(15);
+                         getNearRestaurants();
                      } else {
                          window.alert('We could not find that location - try entering a more' +
                              ' specific place.');
