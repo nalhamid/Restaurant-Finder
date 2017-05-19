@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Restaurants Finder</title>
     <meta charset="UTF-8">
@@ -13,19 +12,7 @@
     <!-- <link href="css/bootstrap-theme.min.css" rel="stylesheet"> -->
     <!-- custom css -->
     <link href="css/style.css" rel="stylesheet">
-    <!-- **********************  Js ********************** -->
-    <!-- jquery -->
-    <script src="js/jquery-3.2.1.min.js"></script>
-    <!-- bootstrap -->
-    <script src="js/bootstrap.min.js"></script>
-    <!-- knockout framework -->
-    <script src="js/knockout-3.4.2.js"></script>
-    <!-- app -->
-    <script src="js/app.js"></script>
-    <!-- google map -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5Hk8aZ5BmdIHmAgt5tiEa2IaGOz_o9Sg&libraries=places&callback=initMap" async defer onerror="googleError()"></script>
 </head>
-
 <body>
     <div class="container-fluid">
         <!-- ********************** header ********************** -->
@@ -43,11 +30,11 @@
                             <input id="hideButton" type="button" class="btn btn-default" value="Hide All" data-bind="click: hidePlaces">
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="filterText" placeholder="Ex: pizza" >
+                            <input type="text" class="form-control" id="filterText" placeholder="Ex: pizza" data-bind="textInput: filterValue">
                             <input id="filterButton" type="button" class="btn btn-default" value="Filter" data-bind="click: filterPlaces">
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="searchText" placeholder="Ex: Riyadh,SA">
+                            <input type="text" class="form-control" id="searchText" placeholder="Ex: Riyadh,SA" data-bind="textInput: addressSearch, valueUpdate: 'change'">
                             <input id="searchButton" type="button" class="btn btn-default" value="Search" data-bind="click: searchPlace">
                         </div>
                     </form>
@@ -97,6 +84,17 @@
         </footer>
         <!-- ********************** footer ********************** -->
     </div>
+    <!-- **********************  Js ********************** -->
+    <!-- jquery -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <!-- bootstrap -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- knockout framework -->
+    <script src="js/knockout-3.4.2.js"></script>
+    <!-- app -->
+    <script src="js/app.js"></script>
+    <!-- google map -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5Hk8aZ5BmdIHmAgt5tiEa2IaGOz_o9Sg&libraries=places&callback=initMap" async defer onerror="googleError()"></script>
 </body>
 
 </html>
