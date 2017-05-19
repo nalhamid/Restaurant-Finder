@@ -18,7 +18,7 @@ function initMap() {
         center: pos,
         zoom: 12
     });
-    
+
     infoWindow = new google.maps.InfoWindow();
 
     // Create a searchbox in order to execute a places search
@@ -198,7 +198,7 @@ function AppViewModel() {
                 service.getDetails({ placeId: results[i].place_id }, getDetails);
             }
         } else {
-            $("#estaurants-list").append("<p>Unable to search for restaurants. please try again</p>");
+            $("#restaurants-list").append("<p>Unable to search for restaurants. please try again</p>");
         }
     }
 
@@ -218,7 +218,7 @@ function AppViewModel() {
             //add resturant to observable array 
             self.restaurants.push(restaurant);
         } else {
-            $("#estaurants-list").append("<p>Unable to search for restaurants. please try again</p>");
+            $("#restaurants-list").append("<p>Unable to search for restaurants. please try again</p>");
         }
     }
 
@@ -297,6 +297,14 @@ function AppViewModel() {
 
         //animate marker
         place.marker.setAnimation(google.maps.Animation.BOUNCE);
+
+        //set time out for marker to stop bouncing
+        setTimeout(
+            function() {
+                place.marker.setAnimation(null);
+            },
+            1500);
+
         //***** Get Venue ID ***** 
         $.ajax({
             url: urlID,
@@ -417,7 +425,7 @@ function AppViewModel() {
             error: function() {
                 //on error google info will popout
                 venueID = false;
-                $("#estaurants-list").append("<p>Unable load info from Foursqaure please try again</p>");
+                $("#restaurants-list").append("<p>Unable load info from Foursqaure please try again</p>");
 
             },
 
